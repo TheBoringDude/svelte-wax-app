@@ -1,14 +1,23 @@
 <script lang="ts">
     import type { LinkSession } from "anchor-link";
     import UserSession from "../lib/user";
-
     import { anchorLink, contextKey, wax } from "../lib/wallet-provider";
-    import type { AuthContextProps, WaxUserProps } from "../typings/context";
-
+    import type {
+        AuthContextProps,
+        UserStore,
+        WaxUserProps,
+    } from "../typings/context";
     import { setContext } from "svelte";
-
-    import { user } from "../store/user";
+    import { writable } from "svelte-local-storage-store";
     import { derived } from "svelte/store";
+
+    export let endpoint: string;
+    export let chainId: string;
+    export let dApp: string;
+
+    export const user = writable<UserStore>(dApp, {
+        user: undefined,
+    });
 
     const session = derived(user, ($user) => {
         return new UserSession($user.user, {
@@ -33,7 +42,13 @@
     };
 
     // logout handler
-    const logout = () => {
+    const logout = async () => {
+        if ($user.user?.type == "anchor") {
+            // clear localstorage data saved by anchor
+            const anchor = anchorLink(endpoint, chainId);
+            await anchor.clearSessions(dApp);
+        }
+
         $user = {
             user: undefined,
         };
@@ -84,10 +99,6 @@
         user: session,
         isLoggedIn,
     });
-
-    export let endpoint: string;
-    export let chainId: string;
-    export let dApp: string;
 </script>
 
 <div>
