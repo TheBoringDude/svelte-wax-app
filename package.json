@@ -18,5 +18,12 @@
     "tslib": "^2.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.0.7"
+  },
+  "dependencies": {
+    "@waxio/waxjs": "^1.1.0",
+    "anchor-link": "^3.5.1",
+    "anchor-link-browser-transport": "^3.5.1",
+    "eosjs": "^22.1.0",
+    "svelte-local-storage-store": "^0.3.1"
   }
 }
